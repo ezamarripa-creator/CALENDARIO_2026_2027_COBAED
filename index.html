@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <script>
+    (function() {
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+      
+       document.addEventListener('keydown', function(e) {
+            const key = e.key.toLowerCase();
+            if ((e.ctrlKey && (key === 'u' || key === 's' || key === 'c' || key === 'i' || key === 'j')) ||
+                (e.ctrlKey && e.shiftKey && (key === 'i' || key === 'j' || key === 'c')) ||
+                e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        let devtoolsTriggered = false;
+        setInterval(function() {
+            if (devtoolsTriggered) return;
+            const before = new Date();
+            debugger; 
+            const after = new Date();
+            if (after - before > 100) { 
+                devtoolsTriggered = true;
+                document.body.innerHTML = '<div style="text-align:center; padding:50px; font-family:sans-serif;"><h1 style="color:#042C53;">⚠️ Acceso no autorizado</h1><p>El uso de herramientas de desarrollo no está permitido en este recurso institucional.</p><p style="font-size:14px; margin-top:30px;">🔒 COBAED · Dirección Académica</p></div>';
+            }
+        }, 2000);
+        
+        const style = document.createElement('style');
+        style.textContent = `body { user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }`;
+        document.head.appendChild(style);
+    })();
+    </script>
+
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calendario Académico COBAED · 2026A / 2027B</title>
+<style>
+/* ============== DESIGN TOKENS ============== */
+:root{
+  --brand:#0b3d2e;          /* COBAED verde institucional */
+  --brand-2:#16a34a;
+  --gold:#c9a227;
+  --bg:#f6f7f9;
+  --surface:#ffffff;
+  --surface-2:#f1f3f6;
+  --text:#0f172a;
+  --muted:#64748b;
+  --border:#e5e7eb;
+  --shadow:0 8px 24px -12px rgba(15,23,42,.18), 0 2px 6px -2px rgba(15,23,42,.08);
+  --radius:14px;
+  --radius-sm:8px;
+
+  /* Category colors */
+  --c-inicio:#15803d;
+  --c-clases:#0ea5e9;
+  --c-parcial-1:#e11d48;      /* 1er Parcial: rojo intenso */
+  --c-parcial-2:#f59e0b;      /* 2do Parcial: ámbar */
+  --c-parcial-3:#7c3aed;      /* 3er Parcial: púrpura */
+  --c-captura:#db2777;
+  --c-evaluacion:#f59e0b;
+  --c-recup:#dc2626;
+  --c-consejo:#475569;
+  --c-padres:#fb923c;
+  --c-colegiado:#0891b2;
+  --c-inhabil:#ef4444;
+  --c-valores:#c9a227;
+  --c-insc-reg:#64748b;
+  --c-insc-irr:#334155;
+  --c-grad:#1e3a8a;
+}
+.dark{
+  --bg:#0b1220;
+  --surface:#111a2e;
+  --surface-2:#0f1729;
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+  --border:#1f2a44;
+  --shadow:0 8px 24px -12px rgba(0,0,0,.6), 0 2px 6px -2px rgba(0,0,0,.4);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.5;
+  min-height:100vh;
+  transition:background .3s,color .3s;
+}
+
+/* ============== HEADER ============== */
+.app-header{
+  background:linear-gradient(135deg,var(--brand) 0%,#0f5132 60%,#14532d 100%);
+  color:#fff;
+  padding:18px 24px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+  box-shadow:var(--shadow);
+  position:sticky;top:0;z-index:50;
+}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,var(--gold),#e7c45c);
+  color:var(--brand);display:grid;place-items:center;font-weight:800;font-size:18px;
+  box-shadow:inset 0 -2px 0 rgba(0,0,0,.15);
+}
+.brand h1{margin:0;font-size:18px;letter-spacing:.3px}
+.brand small{display:block;opacity:.8;font-size:12px;font-weight:400}
+.header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{
+  background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);
+  padding:8px 14px;border-radius:10px;font-size:13px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;font-weight:500;
+  transition:all .2s;
+}
+.btn:hover{background:rgba(255,255,255,.22);transform:translateY(-1px)}
+.btn-primary{background:var(--gold);color:#1f2937;border-color:var(--gold)}
+.btn-primary:hover{background:#e7c45c}
+.semester-switch{
+  display:inline-flex;background:rgba(0,0,0,.2);border-radius:10px;padding:3px;
+}
+.semester-switch button{
+  background:transparent;color:#fff;border:none;padding:8px 14px;border-radius:8px;
+  font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;
+}
+.semester-switch button.active{background:var(--gold);color:#1f2937}
+
+/* ============== LAYOUT ============== */
+.container{max-width:1400px;margin:0 auto;padding:20px}
+.dashboard{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;
+}
+.stat-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;box-shadow:var(--shadow);transition:transform .2s;
+}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-card .label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+.stat-card .value{font-size:28px;font-weight:800;margin-top:6px;color:var(--brand-2)}
+.stat-card .icon{
+  width:36px;height:36px;border-radius:10px;display:grid;place-items:center;
+  background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:var(--brand);float:right;
+  font-size:18px;
+}
+.dark .stat-card .icon{background:linear-gradient(135deg,#064e3b,#065f46);color:#bbf7d0}
+
+.main-grid{
+  display:grid;grid-template-columns:1fr 340px;gap:20px;
+}
+
+/* ============== TOOLBAR ============== */
+.toolbar{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px;box-shadow:var(--shadow);margin-bottom:14px;
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+}
+.toolbar .search{
+  flex:1;min-width:200px;display:flex;align-items:center;gap:8px;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;
+}
+.toolbar .search input{
+  border:none;background:transparent;outline:none;width:100%;color:var(--text);font-size:14px;
+}
+.toolbar .view-toggle{display:inline-flex;background:var(--surface-2);border-radius:10px;padding:3px;border:1px solid var(--border)}
+.toolbar .view-toggle button{
+  background:transparent;border:none;padding:7px 12px;border-radius:8px;cursor:pointer;
+  color:var(--muted);font-weight:600;font-size:13px;
+}
+.toolbar .view-toggle button.active{background:var(--brand);color:#fff}
+
+.nav-btn{
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  width:36px;height:36px;border-radius:10px;cursor:pointer;font-size:16px;
+  display:grid;place-items:center;transition:all .2s;
+}
+.nav-btn:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+.month-label{font-weight:700;font-size:16px;min-width:170px;text-align:center}
+
+/* ============== CALENDAR ============== */
+.calendar-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px;box-shadow:var(--shadow);
+}
+.cal-weekdays{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:8px;
+}
+.cal-weekdays div{
+  text-align:center;font-size:11px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.6px;padding:6px 0;
+}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-day{
+  aspect-ratio:1/1.05;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:3px;
+  cursor:pointer;position:relative;transition:all .2s;overflow:hidden;
+}
+.cal-day:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--brand-2)}
+.cal-day.other-month{opacity:.35}
+.cal-day.today{border:2px solid var(--gold);background:linear-gradient(180deg,rgba(201,162,39,.12),transparent)}
+.cal-day .num{font-weight:700;font-size:13px}
+.cal-day .pills{display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.cal-day .pill{
+  font-size:9.5px;padding:2px 5px;border-radius:4px;color:#fff;font-weight:600;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cal-day .more{font-size:9px;color:var(--muted);font-weight:600}
+.cal-day.weekend .num{color:var(--c-inhabil)}
+
+/* Tooltip */
+.tip{
+  position:absolute;background:#0f172a;color:#fff;padding:6px 10px;border-radius:6px;
+  font-size:11px;z-index:200;pointer-events:none;max-width:240px;
+  box-shadow:0 6px 18px rgba(0,0,0,.3);opacity:0;transition:opacity .15s;
+}
+.tip.show{opacity:1}
+
+/* ============== SIDEBAR ============== */
+.sidebar{display:flex;flex-direction:column;gap:14px}
+.panel{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;box-shadow:var(--shadow);
+}
+.panel h3{
+  margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;
+  color:var(--muted);display:flex;align-items:center;gap:8px;
+}
+.panel h3::before{content:"";width:4px;height:14px;background:var(--brand-2);border-radius:2px}
+
+.filter-list{display:flex;flex-direction:column;gap:6px;max-height:340px;overflow-y:auto}
+.filter-item{
+  display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;cursor:pointer;
+  font-size:13px;transition:background .15s;
+}
+.filter-item:hover{background:var(--surface-2)}
+.filter-item input{accent-color:var(--brand-2)}
+.filter-item .dot{width:10px;height:10px;border-radius:50%}
+.filter-item .count{margin-left:auto;background:var(--surface-2);padding:1px 7px;border-radius:10px;font-size:11px;color:var(--muted);font-weight:600}
+
+.upcoming-list{display:flex;flex-direction:column;gap:10px;max-height:340px;overflow-y:auto}
+.upcoming-item{
+  padding:10px;border-radius:10px;background:var(--surface-2);border-left:3px solid var(--brand-2);
+  cursor:pointer;transition:all .2s;
+}
+.upcoming-item:hover{transform:translateX(3px)}
+.upcoming-item .date{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase}
+.upcoming-item .title{font-weight:600;font-size:13px;margin:2px 0}
+.upcoming-item .countdown{font-size:11px;color:var(--brand-2);font-weight:700}
+.upcoming-item .fav{float:right;color:var(--gold);cursor:pointer}
+
+.values-card{
+  background:linear-gradient(135deg,var(--gold),#e7c45c);color:#1f2937;
+  padding:16px;border-radius:var(--radius);box-shadow:var(--shadow);
+}
+.values-card h3{color:#1f2937}
+.values-card h3::before{background:#1f2937}
+.values-card .value-text{font-size:18px;font-weight:800;letter-spacing:.5px}
+.values-card .month-text{font-size:12px;text-transform:uppercase;font-weight:600;opacity:.8}
+
+/* ============== AGENDA VIEW ============== */
+.agenda-list{display:flex;flex-direction:column;gap:8px}
+.agenda-item{
+  display:grid;grid-template-columns:80px 1fr auto;gap:14px;
+  background:var(--surface-2);padding:12px 14px;border-radius:10px;align-items:center;
+  border-left:4px solid var(--brand-2);cursor:pointer;transition:all .2s;
+}
+.agenda-item:hover{transform:translateX(4px);box-shadow:var(--shadow)}
+.agenda-item .day-box{
+  background:var(--surface);border-radius:8px;padding:8px;text-align:center;
+  border:1px solid var(--border);
+}
+.agenda-item .day-box .d{font-size:20px;font-weight:800;color:var(--brand-2);line-height:1}
+.agenda-item .day-box .m{font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:2px}
+.agenda-item .title{font-weight:600}
+.agenda-item .desc{font-size:12px;color:var(--muted);margin-top:2px}
+.agenda-item .cat-tag{font-size:10px;padding:3px 8px;border-radius:6px;color:#fff;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+
+/* ============== MODAL ============== */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;
+  align-items:center;justify-content:center;z-index:100;padding:20px;
+  backdrop-filter:blur(4px);
+}
+.modal-backdrop.show{display:flex;animation:fadeIn .2s}
+.modal{
+  background:var(--surface);border-radius:16px;max-width:520px;width:100%;
+  padding:0;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3);
+  animation:slideUp .3s;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{padding:20px 24px;color:#fff;position:relative}
+.modal-header h2{margin:0;font-size:20px}
+.modal-header .date{opacity:.85;font-size:13px;margin-top:4px}
+.modal-header .close{
+  position:absolute;top:16px;right:16px;background:rgba(255,255,255,.2);border:none;
+  color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;
+}
+.modal-body{padding:20px 24px}
+.modal-body p{margin:0 0 12px;color:var(--text)}
+.modal-body .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.modal-body .meta span{
+  background:var(--surface-2);padding:5px 10px;border-radius:8px;font-size:12px;color:var(--muted);
+}
+
+/* ============== RESPONSIVE ============== */
+@media(max-width:1024px){
+  .main-grid{grid-template-columns:1fr}
+  .dashboard{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:640px){
+  .container{padding:12px}
+  .cal-day{padding:3px;font-size:11px}
+  .cal-day .pill{font-size:8px;padding:1px 3px}
+  .brand h1{font-size:14px}
+  .dashboard{grid-template-columns:repeat(2,1fr)}
+  .stat-card .value{font-size:20px}
+  .agenda-item{grid-template-columns:60px 1fr}
+  .agenda-item .cat-tag{display:none}
+}
+
+/* Print */
+@media print{
+  .app-header,.toolbar,.sidebar,.btn,.semester-switch{display:none!important}
+  body{background:#fff}
+  .main-grid{grid-template-columns:1fr}
+  .calendar-card{box-shadow:none;border:1px solid #ccc}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <div class="logo">C</div>
+    <div>
+      <h1>Calendario Académico COBAED</h1>
+      <small>Colegio de Bachilleres del Estado de Durango</small>
+    </div>
+  </div>
+  <div class="header-actions">
+    <div class="semester-switch" id="semesterSwitch">
+      <button data-sem="2026A" class="active">Semestre 2026A</button>
+      <button data-sem="2027B">Semestre 2027B</button>
+    </div>
+    <button class="btn" id="themeBtn" title="Modo oscuro/claro">🌙</button>
+    <button class="btn" onclick="window.print()">🖨️ Imprimir</button>
+    <button class="btn btn-primary" id="exportPdfBtn">📄 PDF</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- DASHBOARD STATS -->
+  <div class="dashboard" id="dashboard"></div>
+
+  <div class="main-grid">
+
+    <!-- MAIN CONTENT -->
+    <div>
+      <div class="toolbar">
+        <button class="nav-btn" id="prevBtn">‹</button>
+        <div class="month-label" id="monthLabel"></div>
+        <button class="nav-btn" id="nextBtn">›</button>
+        <button class="nav-btn" id="todayBtn" title="Ir a hoy" style="width:auto;padding:0 12px;font-size:13px">Hoy</button>
+        <div class="search">
+          <span>🔍</span>
+          <input type="text" id="searchInput" placeholder="Buscar evento..." />
+        </div>
+        <div class="view-toggle">
+          <button data-view="calendar" class="active">📅 Calendario</button>
+          <button data-view="agenda">📋 Agenda</button>
+        </div>
+      </div>
+
+      <div class="calendar-card" id="calendarView"></div>
+      <div class="calendar-card" id="agendaView" style="display:none"></div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="panel">
+        <h3>Filtros por categoría</h3>
+        <div class="filter-list" id="filterList"></div>
+      </div>
+      <div class="values-card" id="valuesCard">
+        <h3>⭐ Valores COBAED</h3>
+        <div class="month-text" id="valuesMonth"></div>
+        <div class="value-text" id="valuesText"></div>
+      </div>
+      <div class="panel">
+        <h3>📌 Próximos eventos</h3>
+        <div class="upcoming-list" id="upcomingList"></div>
+      </div>
+      <div class="panel">
+        <h3>⭐ Favoritos</h3>
+        <div class="upcoming-list" id="favoritesList"></div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div class="tip" id="tooltip"></div>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <div class="modal-header" id="modalHeader">
+      <button class="close" onclick="closeModal()">✕</button>
+      <h2 id="modalTitle"></h2>
+      <div class="date" id="modalDate"></div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   COBAED · DATOS DE CALENDARIO
+   ============================================================ */
+
+const CATEGORIES = {
+  inicio:      { label:"Inicio de actividades", color:"var(--c-inicio)",   hex:"#15803d" },
+  clases:      { label:"Inicio de clases",      color:"var(--c-clases)",   hex:"#0ea5e9" },
+  parcial_1:   { label:"1er Parcial",           color:"var(--c-parcial-1)",hex:"#e11d48" },
+  parcial_2:   { label:"2do Parcial",           color:"var(--c-parcial-2)",hex:"#f59e0b" },
+  parcial_3:   { label:"3er Parcial",           color:"var(--c-parcial-3)",hex:"#7c3aed" },
+  captura:     { label:"Captura de calificaciones", color:"var(--c-captura)", hex:"#db2777" },
+  evaluacion:  { label:"Evaluaciones y proyectos", color:"var(--c-evaluacion)", hex:"#f59e0b" },
+  recup:       { label:"Recuperaciones extraordinarias", color:"var(--c-recup)", hex:"#dc2626" },
+  consejo:     { label:"Reunión de Academia estatal", color:"var(--c-consejo)", hex:"#475569" },
+  padres:      { label:"Escuela para padres",   color:"var(--c-padres)",   hex:"#fb923c" },
+  colegiado:   { label:"Trabajo colegiado",     color:"var(--c-colegiado)",hex:"#0891b2" },
+  inhabil:     { label:"Días inhábiles",        color:"var(--c-inhabil)",  hex:"#ef4444" },
+  valores:     { label:"Valores COBAED",        color:"var(--c-valores)",  hex:"#c9a227" },
+  insc_reg:    { label:"Inscripciones regulares",   color:"var(--c-insc-reg)", hex:"#64748b" },
+  insc_irr:    { label:"Inscripciones irregulares", color:"var(--c-insc-irr)", hex:"#334155" },
+  grad:        { label:"Graduaciones",          color:"var(--c-grad)",     hex:"#1e3a8a" },
+};
+
+// id, sem, title, start (YYYY-MM-DD), end, cat, desc, prio
+const EVENTS = [
+  /* ============ SEMESTRE 2026A (Sep 2026 - Ene 2027) ============ */
+  { id:"26-01", sem:"2026A", title:"Inicio de actividades", start:"2026-08-10", end:"2026-08-10", cat:"inicio", prio:"alta", desc:"Inicio oficial de actividades del semestre 2026A." },
+
+  { id:"26-02", sem:"2026A", title:"Inscripciones alumnos regulares", start:"2026-08-20", end:"2026-08-21", cat:"insc_reg", prio:"alta", desc:"Periodo de inscripciones para alumnos regulares." },
+  { id:"26-02", sem:"2026A", title:"Inscripciones alumnos regulares", start:"2026-08-24", end:"2026-08-28", cat:"insc_reg", prio:"alta", desc:"Periodo de inscripciones para alumnos regulares." },
+
+
+  { id:"26-03", sem:"2026A", title:"1er Parcial", start:"2026-08-31", end:"2026-09-04", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Del 31 agosto al 2 octubre. Captura de calificaciones: 07 de noviembre." },
+  { id:"26-03", sem:"2026A", title:"1er Parcial", start:"2026-09-07", end:"2026-09-11", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Del 31 agosto al 2 octubre. Captura de calificaciones: 07 de noviembre." },
+  { id:"26-03", sem:"2026A", title:"1er Parcial", start:"2026-09-14", end:"2026-09-18", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Del 31 agosto al 2 octubre. Captura de calificaciones: 07 de noviembre." },
+  { id:"26-03", sem:"2026A", title:"1er Parcial", start:"2026-09-21", end:"2026-09-25", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Del 31 agosto al 2 octubre. Captura de calificaciones: 07 de noviembre." },
+  { id:"26-03", sem:"2026A", title:"1er Parcial", start:"2026-09-28", end:"2026-10-02", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Del 31 agosto al 2 octubre. Captura de calificaciones: 07 de noviembre." },
+
+
+
+  { id:"26-04", sem:"2026A", title:"2do Parcial", start:"2026-10-05", end:"2026-10-09", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Del 5 octubre al 6 noviembre. Captura de calificaciones: 11 de noviembre." },
+  { id:"26-04", sem:"2026A", title:"2do Parcial", start:"2026-10-12", end:"2026-10-15", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Del 5 octubre al 6 noviembre. Captura de calificaciones: 11 de noviembre." },
+  { id:"26-04", sem:"2026A", title:"2do Parcial", start:"2026-10-19", end:"2026-10-23", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Del 5 octubre al 6 noviembre. Captura de calificaciones: 11 de noviembre." },
+  { id:"26-04", sem:"2026A", title:"2do Parcial", start:"2026-10-26", end:"2026-10-30", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Del 5 octubre al 6 noviembre. Captura de calificaciones: 11 de noviembre." },
+  { id:"26-04", sem:"2026A", title:"2do Parcial", start:"2026-11-02", end:"2026-11-05", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Del 5 octubre al 6 noviembre. Captura de calificaciones: 11 de noviembre." },
+  
+
+
+  { id:"26-5", sem:"2026A", title:"3er Parcial", start:"2026-11-09", end:"2026-11-13", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Del 9 noviembre al 11 noviembre. Captura de calificaciones: 16 de diciembre." },
+  { id:"26-5", sem:"2026A", title:"3er Parcial", start:"2026-11-16", end:"2026-11-20", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Del 9 noviembre al 11 noviembre. Captura de calificaciones: 16 de diciembre." },
+  { id:"26-5", sem:"2026A", title:"3er Parcial", start:"2026-11-23", end:"2026-11-27", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Del 9 noviembre al 11 noviembre. Captura de calificaciones: 16 de diciembre." },
+  { id:"26-5", sem:"2026A", title:"3er Parcial", start:"2026-11-30", end:"2026-12-04", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Del 9 noviembre al 11 noviembre. Captura de calificaciones: 16 de diciembre." },
+  { id:"26-5", sem:"2026A", title:"3er Parcial", start:"2026-12-07", end:"2026-12-11", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Del 9 noviembre al 11 noviembre. Captura de calificaciones: 16 de diciembre." },
+
+
+
+
+  { id:"26-06", sem:"2026A", title:"Captura calificaciones 1era Recuperación", start:"2026-08-19", end:"2026-08-19", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 1era Recuperación." },
+  { id:"26-07", sem:"2026A", title:"Captura calificaciones 2da Recuperación", start:"2026-09-30", end:"2026-09-30", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones de la 2da Recuperación." },
+  { id:"26-08", sem:"2026A", title:"Captura calificaciones 3era Recuperación", start:"2026-10-21", end:"2026-10-21", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones de la 3era Recuperación." },
+
+  { id:"26-09", sem:"2026A", title:"Captura calificaciones 1er Parcial", start:"2026-10-07", end:"2026-10-07", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 1er parcial." },
+  { id:"26-10", sem:"2026A", title:"Captura calificaciones 2do Parcial", start:"2026-11-11", end:"2026-11-11", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 2do parcial." },
+  { id:"26-11", sem:"2026A", title:"Captura calificaciones 3er Parcial", start:"2026-12-16", end:"2026-12-16", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 3er parcial." },
+
+  { id:"26-12", sem:"2026A", title:"Inicio de clases", start:"2026-08-31", end:"2026-08-31", cat:"clases", prio:"alta", desc:"Comienzan las clases del semestre 2026A." },
+
+  { id:"26-13", sem:"2026A", title:"Inscripciones alumnos irregulares", start:"2026-09-07", end:"2026-09-10", cat:"insc_irr", prio:"media", desc:"Periodo de inscripciones para alumnos irregulares." },
+
+  { id:"26-14", sem:"2026A", title:"Curso de inducción PADRES", start:"2026-09-11", end:"2026-09-11", cat:"padres", prio:"media", desc:"Curso de inducción ESCUELA para padres." },
+
+  { id:"26-15", sem:"2026A", title:"Proyectos y evaluaciones", start:"2026-12-14", end:"2026-12-18", cat:"evaluacion", prio:"alta", desc:"Periodo de proyectos y evaluaciones finales. Captura: 13 de enero." },
+  { id:"26-15", sem:"2026A", title:"Proyectos y evaluaciones", start:"2027-01-04", end:"2027-01-07", cat:"evaluacion", prio:"alta", desc:"Periodo de proyectos y evaluaciones finales. Captura: 13 de enero." },
+
+
+  { id:"26-16", sem:"2026A", title:"Captura evaluaciones finales", start:"2027-01-13", end:"2027-01-13", cat:"captura", prio:"alta", desc:"Último día de captura de evaluaciones finales." },
+
+  { id:"26-17", sem:"2026A", title:"Fin de actividades del semestre", start:"2027-01-18", end:"2027-01-18", cat:"inicio", prio:"alta", desc:"Fin oficial del semestre 2026A." },
+
+  { id:"26-18", sem:"2026A", title:"Recuperación extraordinaria 1", start:"2026-07-13", end:"2026-07-24", cat:"recup", prio:"media", desc:"Primera recuperación extraordinaria. Captura: 19 de agosto." },
+  { id:"26-19", sem:"2026A", title:"Recuperación extraordinaria 2", start:"2026-08-24", end:"2026-08-28", cat:"recup", prio:"media", desc:"Segunda recuperación extraordinaria. Captura: 3 de septiembre." },
+  { id:"26-19", sem:"2026A", title:"Recuperación extraordinaria 2", start:"2026-08-31", end:"2026-09-04", cat:"recup", prio:"media", desc:"Segunda recuperación extraordinaria. Captura: 3 de septiembre." },
+
+  { id:"26-20", sem:"2026A", title:"Recuperación extraordinaria 3", start:"2026-09-14", end:"2026-09-18", cat:"recup", prio:"media", desc:"Tercera recuperación extraordinaria. Captura: 30 de septiembre." },
+  { id:"26-20", sem:"2026A", title:"Recuperación extraordinaria 3", start:"2026-09-21", end:"2026-09-25", cat:"recup", prio:"media", desc:"Tercera recuperación extraordinaria. Captura: 30 de septiembre." },
+  { id:"26-20", sem:"2026A", title:"Recuperación extraordinaria 3", start:"2026-09-28", end:"2026-09-28", cat:"recup", prio:"media", desc:"Tercera recuperación extraordinaria. Captura: 30 de septiembre." },
+  
+
+  { id:"26-21", sem:"2026A", title:"Recuperación extraordinaria 4", start:"2026-10-05", end:"2026-10-09", cat:"recup", prio:"media", desc:"Cuarta recuperación extraordinaria. Captura: 21 de octubre." },
+  { id:"26-21", sem:"2026A", title:"Recuperación extraordinaria 4", start:"2026-10-12", end:"2026-10-16", cat:"recup", prio:"media", desc:"Cuarta recuperación extraordinaria. Captura: 21 de octubre." },
+	
+
+
+
+  { id:"26-22", sem:"2026A", title:"Día inhábil", start:"2026-11-02", end:"2026-11-02", cat:"inhabil", prio:"baja", desc:"Día de muertos." },
+  { id:"26-23", sem:"2026A", title:"Día inhábil — Revolución Mexicana", start:"2026-11-20", end:"2026-11-20", cat:"inhabil", prio:"baja", desc:"Conmemoración de la Revolución Mexicana." },
+  { id:"26-24", sem:"2026A", title:"Periodo vacacional decembrino", start:"2026-12-21", end:"2027-01-01", cat:"inhabil", prio:"alta", desc:"Periodo vacacional de fin de año." },
+
+  { id:"26-25", sem:"2026A", title:"Reunion de Académia estatal", start:"2026-08-24", end:"2026-08-27", cat:"consejo", prio:"media", desc:"Sesión de consejo técnico escolar." },
+
+  { id:"26-26", sem:"2026A", title:"Trabajo Colegiado en Plantel", start:"2026-08-28", end:"2026-08-28", cat:"colegiado", prio:"media", desc:"Sesión de trabajo colegiado en plantel.SESIÓN PLANEACIÓN" },
+  { id:"26-27", sem:"2026A", title:"Trabajo Colegiado en Plantel", start:"2026-10-16", end:"2026-10-16", cat:"colegiado", prio:"media", desc:"Sesión estatal de trabajo colegiado SESIÓN SEGUIMIENTO." },
+  { id:"26-28", sem:"2026A", title:"Trabajo Colegiado en Plantel", start:"2026-11-19", end:"2026-11-19", cat:"colegiado", prio:"media", desc:"Sesión estatal de trabajo colegiado.SESIÓN SEGUIMIENTO" },
+  { id:"26-29", sem:"2026A", title:"Trabajo Colegiado en Plantel", start:"2027-01-18", end:"2027-01-18", cat:"colegiado", prio:"media", desc:"Sesión estatal de trabajo colegiado.SESIÓN EVALUACIÓN" },
+
+  { id:"26-V1", sem:"2026A", title:"Valores: Respeto y Trabajo en Equipo", start:"2026-09-01", end:"2026-09-30", cat:"valores", prio:"baja", desc:"Valores institucionales del mes de septiembre." },
+  { id:"26-V2", sem:"2026A", title:"Valores: Compromiso y Solidaridad", start:"2026-10-01", end:"2026-10-31", cat:"valores", prio:"baja", desc:"Valores institucionales del mes de octubre." },
+  { id:"26-V3", sem:"2026A", title:"Valores: Honestidad y Disciplina", start:"2026-11-01", end:"2026-11-30", cat:"valores", prio:"baja", desc:"Valores institucionales del mes de noviembre." },
+
+  /* ============ SEMESTRE 2027B (Ene 2027 - Jul 2027) ============ */
+
+  { id:"27-01", sem:"2027B", title:"Inicio de actividades", start:"2027-01-18", end:"2027-01-18", cat:"inicio", prio:"alta", desc:"Inicio oficial de actividades del semestre 2027B." },
+
+  { id:"27-02", sem:"2027B", title:"Inscripciones alumnos regulares", start:"2027-01-27", end:"2027-02-03", cat:"insc_reg", prio:"alta", desc:"Periodo de inscripciones para alumnos regulares." },
+  { id:"27-03", sem:"2027B", title:"Inscripciones alumnos irregulares", start:"2027-02-15", end:"2027-02-19", cat:"insc_irr", prio:"media", desc:"Periodo de inscripciones para alumnos irregulares." },
+
+  { id:"27-04", sem:"2027B", title:"Inicio de clases", start:"2027-02-08", end:"2027-02-08", cat:"clases", prio:"alta", desc:"Comienzan las clases del semestre 2027B." },
+
+  { id:"27-05", sem:"2027B", title:"1er Parcial", start:"2027-02-08", end:"2027-03-12", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Captura: 17 de marzo." },
+  { id:"27-06", sem:"2027B", title:"2do Parcial", start:"2027-03-15", end:"2027-04-30", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Captura: 6 de mayo." },
+  { id:"27-07", sem:"2027B", title:"3er Parcial", start:"2027-05-03", end:"2027-06-11", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Captura: 9 de junio." },
+
+  { id:"27-08", sem:"2027B", title:"Captura calificaciones 1er Parcial", start:"2027-03-17", end:"2027-03-17", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 1er parcial." },
+  { id:"27-09", sem:"2027B", title:"Captura calificaciones 2do Parcial", start:"2027-05-06", end:"2027-05-06", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 2do parcial." },
+  { id:"27-10", sem:"2027B", title:"Captura calificaciones 3er Parcial", start:"2027-06-09", end:"2027-06-09", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 3er parcial." },
+  { id:"27-11", sem:"2027B", title:"Captura evaluaciones finales", start:"2027-06-18", end:"2027-06-18", cat:"captura", prio:"alta", desc:"Último día de captura de evaluaciones finales." },
+
+  { id:"27-12", sem:"2027B", title:"Proyectos y evaluaciones", start:"2027-06-14", end:"2027-06-23", cat:"evaluacion", prio:"alta", desc:"Periodo de proyectos y evaluaciones finales. Captura: 25 de junio." },
+
+  { id:"27-13", sem:"2027B", title:"Fin de actividades del semestre", start:"2027-07-16", end:"2027-07-16", cat:"inicio", prio:"alta", desc:"Fin oficial del semestre 2027B." },
+
+  { id:"27-14", sem:"2027B", title:"Recuperación extraordinaria 1", start:"2027-01-18", end:"2027-01-29", cat:"recup", prio:"media", desc:"Primera recuperación extraordinaria. Captura: 3 de febrero." },
+  { id:"27-15", sem:"2027B", title:"Recuperación extraordinaria 2", start:"2027-02-08", end:"2027-02-19", cat:"recup", prio:"media", desc:"Segunda recuperación extraordinaria. Captura: 24 de febrero." },
+  { id:"27-16", sem:"2027B", title:"Recuperación extraordinaria 3", start:"2027-03-01", end:"2027-03-12", cat:"recup", prio:"media", desc:"Tercera recuperación extraordinaria. Captura: 17 de marzo." },
+  { id:"27-17", sem:"2027B", title:"Recuperación extraordinaria 4", start:"2027-04-05", end:"2027-04-16", cat:"recup", prio:"media", desc:"Cuarta recuperación extraordinaria. Captura: 21 de abril." },
+
+  { id:"27-18", sem:"2027B", title:"Recuperación extraordinaria (sem. siguiente)", start:"2027-06-28", end:"2027-07-14", cat:"recup", prio:"media", desc:"Recuperación extraordinaria del siguiente semestre. Captura: 16 de julio." },
+
+  { id:"27-19", sem:"2027B", title:"1ra Escuela para Padres", start:"2027-04-12", end:"2027-04-14", cat:"padres", prio:"media", desc:"Primera sesión de escuela para padres." },
+  { id:"27-20", sem:"2027B", title:"2da Escuela para Padres", start:"2027-05-17", end:"2027-05-19", cat:"padres", prio:"media", desc:"Segunda sesión de escuela para padres." },
+
+  { id:"27-21", sem:"2027B", title:"Semana Santa (vacaciones)", start:"2027-03-22", end:"2027-04-02", cat:"inhabil", prio:"alta", desc:"Periodo vacacional de Semana Santa." },
+
+  { id:"27-22", sem:"2027B", title:"Día del Trabajo", start:"2027-05-05", end:"2027-05-05", cat:"inhabil", prio:"baja", desc:"Día inhábil." },
+  { id:"27-23", sem:"2027B", title:"Día del Maestro", start:"2027-05-14", end:"2027-05-14", cat:"inhabil", prio:"baja", desc:"Conmemoración del día del maestro." },
+
+  { id:"27-24", sem:"2027B", title:"Reunion de Académia Estatal", start:"2027-01-27", end:"2027-02-02", cat:"consejo", prio:"media", desc:"Sesión de consejo técnico escolar." },
+
+  { id:"27-25", sem:"2027B", title:"Trabajo Colegiado estatal", start:"2027-02-04", end:"2027-02-04", cat:"colegiado", prio:"media", desc:"Sesión de trabajo colegiado en plantel. SESIÓN PLANEACIÓN." },
+  { id:"27-26", sem:"2027B", title:"Trabajo Colegiado estatal", start:"2027-04-09", end:"2027-04-09", cat:"colegiado", prio:"media", desc:"Sesión estatal de trabajo colegiado. SESIÓN SEGUIMIENTO." },
+  { id:"27-27", sem:"2027B", title:"Trabajo Colegiado estatal", start:"2027-05-14", end:"2027-05-14", cat:"colegiado", prio:"media", desc:"Sesión estatal de trabajo colegiado. SESIÓN SEGUIMIENTO." },
+  { id:"27-28", sem:"2027B", title:"Trabajo Colegiado estatal", start:"2027-06-30", end:"2027-06-30", cat:"colegiado", prio:"media", desc:"Sesión estatal de trabajo colegiado. SESIÓN EVALUACIÓN." },
+
+
+
+  { id:"27-29", sem:"2027B", title:"Graduaciones", start:"2027-06-30", end:"2027-06-30", cat:"grad", prio:"alta", desc:"Ceremonia de graduaciones." },
+
+  { id:"27-V1", sem:"2027B", title:"Valores: Respeto y Compromiso", start:"2027-02-01", end:"2027-02-28", cat:"valores", prio:"baja", desc:"Valores institucionales del mes de febrero." },
+  { id:"27-V2", sem:"2027B", title:"Valores: Honestidad", start:"2027-03-01", end:"2027-03-31", cat:"valores", prio:"baja", desc:"Valores institucionales del mes de marzo." },
+  { id:"27-V3", sem:"2027B", title:"Valores: Disciplina y Trabajo en Equipo", start:"2027-04-01", end:"2027-04-30", cat:"valores", prio:"baja", desc:"Valores institucionales del mes de abril." },
+  { id:"27-V4", sem:"2027B", title:"Valores: Solidaridad", start:"2027-05-01", end:"2027-05-31", cat:"valores", prio:"baja", desc:"Valores institucionales del mes de mayo." },
+];
+
+const SEMESTERS = {
+  "2026A": { label:"Semestre 2026A (Sep 2026 — Ene 2027)", initMonth: new Date(2026,8,1), diasEfectivos:83 },
+  "2027B": { label:"Semestre 2027B (Ene 2027 — Jul 2027)", initMonth: new Date(2027,1,1), diasEfectivos:81 },
+};
+
+const MONTHS_ES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const MONTHS_ES_SHORT = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+const DAYS_ES = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const STORAGE_KEY = "cobaed_cal_state_v1";
+let state = {
+  semester: "2026A",
+  currentMonth: new Date(2026,8,1),
+  view: "calendar",
+  filters: Object.keys(CATEGORIES),
+  favorites: [],
+  search: "",
+  dark:false,
+};
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    semester:state.semester, view:state.view, filters:state.filters,
+    favorites:state.favorites, dark:state.dark,
+  }));
+}
+function loadState(){
+  try{
+    const s = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+    Object.assign(state, s);
+    if(s.semester) state.currentMonth = new Date(SEMESTERS[s.semester].initMonth);
+  }catch(e){}
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function ymd(d){return d.toISOString().slice(0,10);}
+function parseDate(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d);}
+function daysBetween(a,b){return Math.round((b-a)/86400000);}
+function inRange(date, ev){
+  const d = ymd(date);
+  return d >= ev.start && d <= ev.end;
+}
+function eventsOnDate(date){
+  return EVENTS.filter(e => e.sem===state.semester && state.filters.includes(e.cat) && inRange(date, e))
+    .filter(e => !state.search || (e.title+" "+e.desc).toLowerCase().includes(state.search.toLowerCase()));
+}
+function semesterEvents(){
+  return EVENTS.filter(e => e.sem===state.semester && state.filters.includes(e.cat))
+    .filter(e => !state.search || (e.title+" "+e.desc).toLowerCase().includes(state.search.toLowerCase()));
+}
+
+/* ============================================================
+   RENDER · DASHBOARD
+   ============================================================ */
+function renderDashboard(){
+  const evs = EVENTS.filter(e=>e.sem===state.semester);
+  
+  // Contar eventos únicos por descripción (desc)
+  const uniqueDescs = new Set();
+  let uniqueEvents = 0;
+  evs.forEach(e => {
+    if (!uniqueDescs.has(e.desc)) {
+      uniqueDescs.add(e.desc);
+      uniqueEvents++;
+    }
+  });
+
+  const parciales = evs.filter(e=>e.cat==="parcial_1" || e.cat==="parcial_2" || e.cat==="parcial_3").length;
+  const recup = evs.filter(e=>e.cat==="recup").length;
+  const dias = SEMESTERS[state.semester].diasEfectivos;
+  const html = `
+    <div class="stat-card"><div class="icon">📚</div><div class="label">Total eventos</div><div class="value">${uniqueEvents}</div></div>
+    <div class="stat-card"><div class="icon">📖</div><div class="label">Días efectivos</div><div class="value">${dias}</div></div>
+    <div class="stat-card"><div class="icon">📝</div><div class="label">Parciales</div><div class="value">${parciales}</div></div>
+    <div class="stat-card"><div class="icon">🔁</div><div class="label">Recuperaciones</div><div class="value">${recup}</div></div>
+  `;
+  document.getElementById("dashboard").innerHTML = html;
+}
+
+/* ============================================================
+   RENDER · CALENDAR
+   ============================================================ */
+function renderCalendar(){
+  const cal = document.getElementById("calendarView");
+  const m = state.currentMonth.getMonth(), y = state.currentMonth.getFullYear();
+  document.getElementById("monthLabel").textContent = `${MONTHS_ES[m]} ${y}`;
+
+  const firstDay = new Date(y,m,1).getDay();
+  const daysInMonth = new Date(y,m+1,0).getDate();
+  const prevDays = new Date(y,m,0).getDate();
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  let html = `<div class="cal-weekdays">${DAYS_ES.map(d=>`<div>${d}</div>`).join("")}</div><div class="cal-grid">`;
+
+  // Prev month
+  for(let i=firstDay-1;i>=0;i--){
+    html += `<div class="cal-day other-month"><div class="num">${prevDays-i}</div></div>`;
+  }
+  // Current month
+  for(let d=1; d<=daysInMonth; d++){
+    const date = new Date(y,m,d);
+    const evs = eventsOnDate(date);
+    const isToday = date.getTime()===today.getTime();
+    const dow = date.getDay();
+    const weekend = (dow===0 || dow===6) ? "weekend":"";
+    const pills = evs.slice(0,3).map(e=>{
+      const c = CATEGORIES[e.cat];
+      return `<div class="pill" data-evid="${e.id}" style="background:${c.hex}" title="${e.title}">${e.title}</div>`;
+    }).join("");
+    const more = evs.length>3 ? `<div class="more">+${evs.length-3} más</div>` : "";
+    html += `<div class="cal-day ${isToday?'today':''} ${weekend}" data-date="${ymd(date)}">
+      <div class="num">${d}</div>
+      <div class="pills">${pills}${more}</div>
+    </div>`;
+  }
+  // Next month
+  const total = firstDay + daysInMonth;
+  const rest = (7 - (total%7))%7;
+  for(let i=1;i<=rest;i++){
+    html += `<div class="cal-day other-month"><div class="num">${i}</div></div>`;
+  }
+  html += `</div>`;
+  cal.innerHTML = html;
+
+  // Click handlers
+  cal.querySelectorAll(".cal-day").forEach(d=>{
+    d.addEventListener("click", (e)=>{
+      const pill = e.target.closest(".pill");
+      if(pill){
+        const ev = EVENTS.find(x=>x.id===pill.dataset.evid);
+        if(ev) openEvent(ev);
+        return;
+      }
+      const date = d.dataset.date;
+      if(!date) return;
+      const evs = eventsOnDate(parseDate(date));
+      if(evs.length===1) openEvent(evs[0]);
+      else if(evs.length>1) openDay(date, evs);
+    });
+    // Tooltip
+    d.addEventListener("mousemove", showDayTooltip);
+    d.addEventListener("mouseleave", hideTooltip);
+  });
+}
+
+/* ============================================================
+   RENDER · AGENDA
+   ============================================================ */
+function renderAgenda(){
+  const view = document.getElementById("agendaView");
+  const evs = semesterEvents().slice().sort((a,b)=>a.start.localeCompare(b.start));
+  if(evs.length===0){ view.innerHTML = `<p style="text-align:center;color:var(--muted);padding:30px">Sin eventos que coincidan.</p>`; return; }
+  let html = `<div class="agenda-list">`;
+  evs.forEach(e=>{
+    const c = CATEGORIES[e.cat];
+    const d = parseDate(e.start);
+    const isRange = e.start!==e.end;
+    html += `<div class="agenda-item" data-evid="${e.id}" style="border-left-color:${c.hex}">
+      <div class="day-box">
+        <div class="d">${d.getDate()}</div>
+        <div class="m">${MONTHS_ES_SHORT[d.getMonth()]} ${d.getFullYear()}</div>
+      </div>
+      <div>
+        <div class="title">${e.title} ${isFavorite(e.id)?'⭐':''}</div>
+        <div class="desc">${isRange ? `${formatDate(e.start)} → ${formatDate(e.end)}` : formatDate(e.start)} · ${e.desc}</div>
+      </div>
+      <div class="cat-tag" style="background:${c.hex}">${c.label}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  view.innerHTML = html;
+  view.querySelectorAll(".agenda-item").forEach(i=>{
+    i.addEventListener("click", ()=>{
+      const ev = EVENTS.find(x=>x.id===i.dataset.evid);
+      if(ev) openEvent(ev);
+    });
+  });
+}
+
+function formatDate(s){
+  const d = parseDate(s);
+  return `${d.getDate()} ${MONTHS_ES_SHORT[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+/* ============================================================
+   RENDER · FILTERS
+   ============================================================ */
+function renderFilters(){
+  const counts = {};
+  EVENTS.filter(e=>e.sem===state.semester).forEach(e=>{counts[e.cat]=(counts[e.cat]||0)+1;});
+  const list = document.getElementById("filterList");
+  list.innerHTML = Object.entries(CATEGORIES).map(([k,v])=>`
+    <label class="filter-item">
+      <input type="checkbox" data-cat="${k}" ${state.filters.includes(k)?'checked':''}/>
+      <span class="dot" style="background:${v.hex}"></span>
+      <span>${v.label}</span>
+      <span class="count">${counts[k]||0}</span>
+    </label>
+  `).join("");
+  list.querySelectorAll("input").forEach(i=>{
+    i.addEventListener("change", ()=>{
+      const c = i.dataset.cat;
+      if(i.checked) state.filters.push(c);
+      else state.filters = state.filters.filter(x=>x!==c);
+      saveState(); renderAll();
+    });
+  });
+}
+
+/* ============================================================
+   RENDER · SIDEBAR PANELS
+   ============================================================ */
+function renderUpcoming(){
+  const now = new Date(); now.setHours(0,0,0,0);
+  const upcoming = EVENTS
+    .filter(e => e.sem===state.semester && parseDate(e.start) >= now)
+    .sort((a,b)=>a.start.localeCompare(b.start))
+    .slice(0,6);
+  const list = document.getElementById("upcomingList");
+  if(upcoming.length===0){
+    list.innerHTML = `<p style="color:var(--muted);font-size:13px">No hay eventos próximos.</p>`;
+    return;
+  }
+  list.innerHTML = upcoming.map(e=>{
+    const c = CATEGORIES[e.cat];
+    const days = daysBetween(now, parseDate(e.start));
+    const countdownText = days===0 ? "🔔 Hoy" : days===1 ? "Mañana" : `En ${days} días`;
+    return `<div class="upcoming-item" data-evid="${e.id}" style="border-left-color:${c.hex}">
+      <span class="fav" data-fav="${e.id}">${isFavorite(e.id)?'⭐':'☆'}</span>
+      <div class="date">${formatDate(e.start)}</div>
+      <div class="title">${e.title}</div>
+      <div class="countdown">${countdownText}</div>
+    </div>`;
+  }).join("");
+  list.querySelectorAll(".upcoming-item").forEach(i=>{
+    i.addEventListener("click",(e)=>{
+      if(e.target.dataset.fav){ toggleFavorite(e.target.dataset.fav); return; }
+      openEvent(EVENTS.find(x=>x.id===i.dataset.evid));
+    });
+  });
+}
+function renderFavorites(){
+  const list = document.getElementById("favoritesList");
+  const favs = EVENTS.filter(e=>state.favorites.includes(e.id));
+  if(favs.length===0){ list.innerHTML = `<p style="color:var(--muted);font-size:13px">Sin favoritos. Marca eventos con ⭐.</p>`; return; }
+  list.innerHTML = favs.map(e=>{
+    const c = CATEGORIES[e.cat];
+    return `<div class="upcoming-item" data-evid="${e.id}" style="border-left-color:${c.hex}">
+      <span class="fav" data-fav="${e.id}">⭐</span>
+      <div class="date">${formatDate(e.start)}</div>
+      <div class="title">${e.title}</div>
+    </div>`;
+  }).join("");
+  list.querySelectorAll(".upcoming-item").forEach(i=>{
+    i.addEventListener("click",(e)=>{
+      if(e.target.dataset.fav){ toggleFavorite(e.target.dataset.fav); return; }
+      openEvent(EVENTS.find(x=>x.id===i.dataset.evid));
+    });
+  });
+}
+function renderValues(){
+  const m = state.currentMonth.getMonth();
+  const valEvent = EVENTS.find(e => e.sem===state.semester && e.cat==="valores" && parseDate(e.start).getMonth()===m);
+  const card = document.getElementById("valuesCard");
+  if(valEvent){
+    document.getElementById("valuesMonth").textContent = MONTHS_ES[m];
+    document.getElementById("valuesText").textContent = valEvent.title.replace("Valores: ","").toUpperCase();
+    card.style.display = "block";
+  } else {
+    document.getElementById("valuesMonth").textContent = MONTHS_ES[m];
+    document.getElementById("valuesText").textContent = "—";
+  }
+}
+
+/* ============================================================
+   FAVORITES
+   ============================================================ */
+function isFavorite(id){return state.favorites.includes(id);}
+function toggleFavorite(id){
+  if(isFavorite(id)) state.favorites = state.favorites.filter(x=>x!==id);
+  else state.favorites.push(id);
+  saveState(); renderUpcoming(); renderFavorites();
+  if(document.getElementById("modal").classList.contains("show")){
+    const cur = document.getElementById("modal").dataset.eid;
+    if(cur===id) openEvent(EVENTS.find(x=>x.id===id));
+  }
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+function openEvent(ev){
+  if(!ev) return;
+  const c = CATEGORIES[ev.cat];
+  document.getElementById("modal").dataset.eid = ev.id;
+  document.getElementById("modalHeader").style.background = `linear-gradient(135deg,${c.hex},${c.hex}cc)`;
+  document.getElementById("modalTitle").innerHTML = `${ev.title} <span style="cursor:pointer" onclick="toggleFavorite('${ev.id}')">${isFavorite(ev.id)?'⭐':'☆'}</span>`;
+  document.getElementById("modalDate").textContent = ev.start===ev.end
+    ? formatDate(ev.start)
+    : `${formatDate(ev.start)} → ${formatDate(ev.end)}`;
+  const dur = daysBetween(parseDate(ev.start), parseDate(ev.end))+1;
+  document.getElementById("modalBody").innerHTML = `
+    <p>${ev.desc}</p>
+    <div class="meta">
+      <span>📂 ${c.label}</span>
+      <span>🎓 ${ev.sem}</span>
+      <span>⏱️ ${dur} día${dur>1?'s':''}</span>
+      <span>🔥 Prioridad: ${ev.prio}</span>
+    </div>
+  `;
+  document.getElementById("modal").classList.add("show");
+}
+function openDay(dateStr, evs){
+  document.getElementById("modal").dataset.eid = "";
+  document.getElementById("modalHeader").style.background = `linear-gradient(135deg,var(--brand),#14532d)`;
+  document.getElementById("modalTitle").textContent = `Eventos del día`;
+  document.getElementById("modalDate").textContent = formatDate(dateStr);
+  document.getElementById("modalBody").innerHTML = evs.map(e=>{
+    const c = CATEGORIES[e.cat];
+    return `<div class="agenda-item" style="border-left-color:${c.hex};margin-bottom:8px;cursor:pointer" onclick="openEvent(EVENTS.find(x=>x.id==='${e.id}'))">
+      <div></div>
+      <div><div class="title">${e.title}</div><div class="desc">${e.desc}</div></div>
+      <div></div>
+    </div>`;
+  }).join("");
+  document.getElementById("modal").classList.add("show");
+}
+function closeModal(){document.getElementById("modal").classList.remove("show");}
+document.getElementById("modal").addEventListener("click",(e)=>{if(e.target.id==="modal") closeModal();});
+window.openEvent = openEvent; window.closeModal = closeModal; window.toggleFavorite = toggleFavorite; window.EVENTS = EVENTS;
+
+/* ============================================================
+   TOOLTIP
+   ============================================================ */
+const tip = document.getElementById("tooltip");
+function showDayTooltip(e){
+  const cell = e.currentTarget;
+  const date = cell.dataset.date;
+  if(!date) return hideTooltip();
+  const evs = eventsOnDate(parseDate(date));
+  if(evs.length===0) return hideTooltip();
+  tip.innerHTML = `<strong>${formatDate(date)}</strong><br>${evs.map(ev=>`• ${ev.title}`).join("<br>")}`;
+  tip.classList.add("show");
+  const x = Math.min(e.pageX+12, window.innerWidth-260);
+  tip.style.left = x+"px";
+  tip.style.top = (e.pageY+12)+"px";
+}
+function hideTooltip(){tip.classList.remove("show");}
+
+/* ============================================================
+   EXPORT PDF (print-to-pdf trick)
+   ============================================================ */
+document.getElementById("exportPdfBtn").addEventListener("click", ()=>{
+  window.print();
+});
+
+/* ============================================================
+   THEME
+   ============================================================ */
+const themeBtn = document.getElementById("themeBtn");
+themeBtn.addEventListener("click", ()=>{
+  state.dark = !state.dark;
+  document.body.classList.toggle("dark", state.dark);
+  themeBtn.textContent = state.dark ? "☀️" : "🌙";
+  saveState();
+});
+
+/* ============================================================
+   SEMESTER & NAV
+   ============================================================ */
+document.getElementById("semesterSwitch").addEventListener("click",(e)=>{
+  const b = e.target.closest("button"); if(!b) return;
+  document.querySelectorAll("#semesterSwitch button").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  state.semester = b.dataset.sem;
+  state.currentMonth = new Date(SEMESTERS[state.semester].initMonth);
+  saveState(); renderAll();
+});
+document.getElementById("prevBtn").addEventListener("click",()=>{
+  state.currentMonth = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth()-1, 1);
+  renderAll();
+});
+document.getElementById("nextBtn").addEventListener("click",()=>{
+  state.currentMonth = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth()+1, 1);
+  renderAll();
+});
+document.getElementById("todayBtn").addEventListener("click",()=>{
+  state.currentMonth = new Date(); state.currentMonth.setDate(1);
+  renderAll();
+});
+document.getElementById("searchInput").addEventListener("input",(e)=>{
+  state.search = e.target.value; renderAll();
+});
+document.querySelectorAll(".view-toggle button").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".view-toggle button").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    state.view = b.dataset.view;
+    document.getElementById("calendarView").style.display = state.view==="calendar"?"block":"none";
+    document.getElementById("agendaView").style.display = state.view==="agenda"?"block":"none";
+    saveState();
+  });
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function renderAll(){
+  renderDashboard();
+  renderCalendar();
+  renderAgenda();
+  renderUpcoming();
+  renderFavorites();
+  renderValues();
+}
+function init(){
+  loadState();
+  // Reflect loaded state in UI
+  document.querySelectorAll("#semesterSwitch button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.sem===state.semester);
+  });
+  document.querySelectorAll(".view-toggle button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.view===state.view);
+  });
+  document.getElementById("calendarView").style.display = state.view==="calendar"?"block":"none";
+  document.getElementById("agendaView").style.display = state.view==="agenda"?"block":"none";
+  document.body.classList.toggle("dark", state.dark);
+  themeBtn.textContent = state.dark ? "☀️" : "🌙";
+
+  renderFilters();
+  renderAll();
+}
+init();
+</script>
+</body>
+</html>
