@@ -44,7 +44,7 @@
 <style>
 /* ============== DESIGN TOKENS ============== */
 :root{
-  --brand:#0b3d2e;
+  --brand:#0b3d2e;          /* COBAED verde institucional */
   --brand-2:#16a34a;
   --gold:#c9a227;
   --bg:#f6f7f9;
@@ -60,12 +60,12 @@
   /* Category colors */
   --c-inicio:#15803d;
   --c-clases:#0ea5e9;
-  --c-parcial-1:#556b2f;
-  --c-parcial-2:#f59e0b;
-  --c-parcial-3:#7c3aed;
+  --c-parcial-1:#556b2f;      /* 1er Parcial: verde olivo */
+  --c-parcial-2:#f59e0b;      /* 2do Parcial: ámbar */
+  --c-parcial-3:#7c3aed;      /* 3er Parcial: púrpura */
   --c-captura:#db2777;
-  --c-evaluacion:#f59e0b;
-  --c-eval-institucional:#0e7490;
+  --c-evaluacion:#6366f1;    /* Evaluaciones Institucionales: índigo */
+  --c-proyecto:#ea580c;      /* Proyectos: naranja */
   --c-recup:#dc2626;
   --c-consejo:#475569;
   --c-padres:#fb923c;
@@ -74,7 +74,7 @@
   --c-valores:#c9a227;
   --c-insc-reg:#64748b;
   --c-insc-irr:#334155;
-  --c-grad:#b91c1c;
+  --c-grad:#1e3a8a;
 }
 .dark{
   --bg:#0b1220;
@@ -431,14 +431,15 @@ body{
 
 const CATEGORIES = {
   inicio:      { label:"Inicio de actividades", color:"var(--c-inicio)",   hex:"#15803d" },
-  graduaciones:{ label:"GRADUACIONES", color:"var(--c-grad)",   hex:"#556b2f" },
+  graduaciones:{ label:"Graduaciones", color:"var(--c-grad)",   hex:"#1e3a8a" },
+
   clases:      { label:"Inicio de clases",      color:"var(--c-clases)",   hex:"#0ea5e9" },
   parcial_1:   { label:"1er Parcial",           color:"var(--c-parcial-1)",hex:"#556b2f" },
   parcial_2:   { label:"2do Parcial",           color:"var(--c-parcial-2)",hex:"#f59e0b" },
   parcial_3:   { label:"3er Parcial",           color:"var(--c-parcial-3)",hex:"#7c3aed" },
   captura:     { label:"Captura de calificaciones", color:"var(--c-captura)", hex:"#db2777" },
-  evaluacion:  { label:"Evaluaciones y proyectos", color:"var(--c-evaluacion)", hex:"#f59e0b" },
-  eval_institucional: { label:"Evaluación Institucional", color:"var(--c-eval-institucional)", hex:"#0e7490" },
+  evaluacion:  { label:"Evaluación Institucional", color:"var(--c-evaluacion)", hex:"#6366f1" },
+  proyecto:    { label:"Proyectos", color:"var(--c-proyecto)", hex:"#ea580c" },
   recup:       { label:"Recuperaciones extraordinarias", color:"var(--c-recup)", hex:"#dc2626" },
   consejo:     { label:"Reunión de Academia estatal", color:"var(--c-consejo)", hex:"#475569" },
   padres:      { label:"Escuela para padres",   color:"var(--c-padres)",   hex:"#fb923c" },
@@ -447,86 +448,165 @@ const CATEGORIES = {
   valores:     { label:"Valores COBAED",        color:"var(--c-valores)",  hex:"#c9a227" },
   insc_reg:    { label:"Inscripciones regulares",   color:"var(--c-insc-reg)", hex:"#64748b" },
   insc_irr:    { label:"Inscripciones irregulares", color:"var(--c-insc-irr)", hex:"#334155" },
-  grad:        { label:"Graduaciones",          color:"var(--c-grad)",     hex:"#b91c1c" },
 };
 
 // id, sem, title, start (YYYY-MM-DD), end, cat, desc, prio
 const EVENTS = [
-  /* ============ SEMESTRE 2026A ============ */
+  /* ============ SEMESTRE 2026A (Sep 2026 - Ene 2027) ============ */
   { id:"26-01", sem:"2026A", title:"Inicio de actividades", start:"2026-08-10", end:"2026-08-10", cat:"inicio", prio:"alta", desc:"Inicio oficial de actividades del semestre 2026A." },
-  { id:"26-02", sem:"2026A", title:"Inscripciones alumnos regulares", start:"2026-08-20", end:"2026-08-28", cat:"insc_reg", prio:"alta", desc:"Periodo de inscripciones para alumnos regulares." },
+
+  { id:"26-02", sem:"2026A", title:"Inscripciones alumnos regulares", start:"2026-08-20", end:"2026-08-21", cat:"insc_reg", prio:"alta", desc:"Periodo de inscripciones para alumnos regulares." },
+  { id:"26-02", sem:"2026A", title:"Inscripciones alumnos regulares", start:"2026-08-24", end:"2026-08-28", cat:"insc_reg", prio:"alta", desc:"Periodo de inscripciones para alumnos regulares." },
+
+
   { id:"26-25", sem:"2026A", title:"Reunion de Académia Estatal", start:"2026-08-24", end:"2026-08-27", cat:"consejo", prio:"media", desc:"Academia Estatal SEMESTRE 2026A" },
-  { id:"26-03", sem:"2026A", title:"1er Parcial", start:"2026-08-31", end:"2026-10-02", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Captura de calificaciones: 07 de noviembre." },
-  { id:"26-04", sem:"2026A", title:"2do Parcial", start:"2026-10-05", end:"2026-11-06", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Captura de calificaciones: 11 de noviembre." },
-  { id:"26-05", sem:"2026A", title:"3er Parcial", start:"2026-11-09", end:"2026-12-11", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Captura de calificaciones: 16 de diciembre." },
+
+
+  { id:"26-03", sem:"2026A", title:"1er Parcial", start:"2026-08-31", end:"2026-09-04", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Del 31 agosto al 2 octubre. Captura de calificaciones: 07 de noviembre." },
+  { id:"26-03", sem:"2026A", title:"1er Parcial", start:"2026-09-07", end:"2026-09-11", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Del 31 agosto al 2 octubre. Captura de calificaciones: 07 de noviembre." },
+  { id:"26-03", sem:"2026A", title:"1er Parcial", start:"2026-09-14", end:"2026-09-18", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Del 31 agosto al 2 octubre. Captura de calificaciones: 07 de noviembre." },
+  { id:"26-03", sem:"2026A", title:"1er Parcial", start:"2026-09-21", end:"2026-09-25", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Del 31 agosto al 2 octubre. Captura de calificaciones: 07 de noviembre." },
+  { id:"26-03", sem:"2026A", title:"1er Parcial", start:"2026-09-28", end:"2026-10-02", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Del 31 agosto al 2 octubre. Captura de calificaciones: 07 de noviembre." },
+
+
+
+  { id:"26-04", sem:"2026A", title:"2do Parcial", start:"2026-10-05", end:"2026-10-09", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Del 5 octubre al 6 noviembre. Captura de calificaciones: 11 de noviembre." },
+  { id:"26-04", sem:"2026A", title:"2do Parcial", start:"2026-10-12", end:"2026-10-15", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Del 5 octubre al 6 noviembre. Captura de calificaciones: 11 de noviembre." },
+  { id:"26-04", sem:"2026A", title:"2do Parcial", start:"2026-10-19", end:"2026-10-23", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Del 5 octubre al 6 noviembre. Captura de calificaciones: 11 de noviembre." },
+  { id:"26-04", sem:"2026A", title:"2do Parcial", start:"2026-10-26", end:"2026-10-30", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Del 5 octubre al 6 noviembre. Captura de calificaciones: 11 de noviembre." },
+  { id:"26-04", sem:"2026A", title:"2do Parcial", start:"2026-11-02", end:"2026-11-06", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Del 5 octubre al 6 noviembre. Captura de calificaciones: 11 de noviembre." },
+  
+
+
+  { id:"26-5", sem:"2026A", title:"3er Parcial", start:"2026-11-09", end:"2026-11-13", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Del 9 noviembre al 11 noviembre. Captura de calificaciones: 16 de diciembre." },
+  { id:"26-5", sem:"2026A", title:"3er Parcial", start:"2026-11-16", end:"2026-11-20", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Del 9 noviembre al 11 noviembre. Captura de calificaciones: 16 de diciembre." },
+  { id:"26-5", sem:"2026A", title:"3er Parcial", start:"2026-11-23", end:"2026-11-27", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Del 9 noviembre al 11 noviembre. Captura de calificaciones: 16 de diciembre." },
+  { id:"26-5", sem:"2026A", title:"3er Parcial", start:"2026-11-30", end:"2026-12-04", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Del 9 noviembre al 11 noviembre. Captura de calificaciones: 16 de diciembre." },
+  { id:"26-5", sem:"2026A", title:"3er Parcial", start:"2026-12-07", end:"2026-12-11", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Del 9 noviembre al 11 noviembre. Captura de calificaciones: 16 de diciembre." },
+
+
+
 
   { id:"26-06", sem:"2026A", title:"Captura calificaciones 1era Recuperación", start:"2026-08-19", end:"2026-08-19", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 1era Recuperación." },
-  { id:"26-07", sem:"2026A", title:"Captura calificaciones 2da Recuperación", start:"2026-09-09", end:"2026-09-09", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones de la 2da Recuperación." },
-  { id:"26-08", sem:"2026A", title:"Captura calificaciones 3era Recuperación", start:"2026-10-01", end:"2026-10-01", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones de la 3era Recuperación." },
-  { id:"26-08a", sem:"2026A", title:"Captura calificaciones 4ta Recuperación", start:"2026-10-21", end:"2026-10-21", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones de la 4ta Recuperación." },
-
+  { id:"26-07", sem:"2026A", title:"Captura calificaciones 2da Recuperación", start:"2026-09-30", end:"2026-09-30", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones de la 2da Recuperación." },
+  { id:"26-08", sem:"2026A", title:"Captura calificaciones 3era Recuperación", start:"2026-10-21", end:"2026-10-21", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones de la 3era Recuperación." },
 
   { id:"26-09", sem:"2026A", title:"Captura calificaciones 1er Parcial", start:"2026-10-07", end:"2026-10-07", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 1er parcial." },
   { id:"26-10", sem:"2026A", title:"Captura calificaciones 2do Parcial", start:"2026-11-11", end:"2026-11-11", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 2do parcial." },
   { id:"26-11", sem:"2026A", title:"Captura calificaciones 3er Parcial", start:"2026-12-16", end:"2026-12-16", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 3er parcial." },
+
   { id:"26-12", sem:"2026A", title:"Inicio de clases", start:"2026-08-31", end:"2026-08-31", cat:"clases", prio:"alta", desc:"Comienzan las clases del semestre 2026A." },
+
   { id:"26-13", sem:"2026A", title:"Inscripciones alumnos irregulares", start:"2026-09-07", end:"2026-09-11", cat:"insc_irr", prio:"media", desc:"Periodo de inscripciones para alumnos irregulares." },
+
   { id:"26-14", sem:"2026A", title:"Curso de inducción PADRES", start:"2026-09-11", end:"2026-09-11", cat:"padres", prio:"media", desc:"Curso de inducción ESCUELA para padres." },
-  { id:"26-15a", sem:"2026A", title:"Proyectos", start:"2026-12-14", end:"2026-12-18", cat:"evaluacion", prio:"alta", desc:"Periodo de proyectos. Captura: 6 de enero." },
-  { id:"26-15", sem:"2026A", title:"Evaluación Institucional", start:"2027-01-04", end:"2027-01-08", cat:"eval_institucional", prio:"alta", desc:"Evaluación Institucional del semestre 2026A." },
+
+  { id:"26-15", sem:"2026A", title:"Proyectos", start:"2026-12-14", end:"2026-12-18", cat:"proyecto", prio:"alta", desc:"Periodo de proyectos. Captura: 6 de enero." },
+  { id:"26-15b", sem:"2026A", title:"Evaluación Institucional", start:"2027-01-04", end:"2027-01-08", cat:"evaluacion", prio:"alta", desc:"Evaluación Institucinal." },
+
+
   { id:"26-16", sem:"2026A", title:"Captura evaluaciones finales", start:"2027-01-13", end:"2027-01-13", cat:"captura", prio:"alta", desc:"Último día de captura de evaluaciones finales." },
+
   { id:"26-17", sem:"2026A", title:"Fin de actividades del semestre 2026A", start:"2027-01-15", end:"2027-01-15", cat:"inicio", prio:"alta", desc:"Fin oficial del semestre 2026A." },
 
+  { id:"26-18", sem:"2026A", title:"Recuperación extraordinaria 1", start:"2026-07-13", end:"2026-07-24", cat:"recup", prio:"media", desc:"Primera recuperación extraordinaria. Captura: 19 de agosto." },
+
+  { id:"26-19", sem:"2026A", title:"Recuperación extraordinaria 2", start:"2026-08-24", end:"2026-08-28", cat:"recup", prio:"media", desc:"Segunda recuperación extraordinaria. Captura: 3 de septiembre." },
+  { id:"26-19", sem:"2026A", title:"Recuperación extraordinaria 2", start:"2026-08-31", end:"2026-09-04", cat:"recup", prio:"media", desc:"Segunda recuperación extraordinaria. Captura: 3 de septiembre." },
+
+  { id:"26-20", sem:"2026A", title:"Recuperación extraordinaria 3", start:"2026-09-14", end:"2026-09-18", cat:"recup", prio:"media", desc:"Tercera recuperación extraordinaria. Captura: 30 de septiembre." },
+  { id:"26-20", sem:"2026A", title:"Recuperación extraordinaria 3", start:"2026-09-21", end:"2026-09-25", cat:"recup", prio:"media", desc:"Tercera recuperación extraordinaria. Captura: 30 de septiembre." },
+  { id:"26-20", sem:"2026A", title:"Recuperación extraordinaria 3", start:"2026-09-28", end:"2026-09-28", cat:"recup", prio:"media", desc:"Tercera recuperación extraordinaria. Captura: 30 de septiembre." },
+  
+
+  { id:"26-21", sem:"2026A", title:"Recuperación extraordinaria 4", start:"2026-10-05", end:"2026-10-09", cat:"recup", prio:"media", desc:"Cuarta recuperación extraordinaria. Captura: 21 de octubre." },
+  { id:"26-21", sem:"2026A", title:"Recuperación extraordinaria 4", start:"2026-10-12", end:"2026-10-16", cat:"recup", prio:"media", desc:"Cuarta recuperación extraordinaria. Captura: 21 de octubre." },
+	
 
   { id:"26-22", sem:"2026A", title:"Día inhábil", start:"2026-11-02", end:"2026-11-02", cat:"inhabil", prio:"baja", desc:"Día de muertos." },
   { id:"26-23", sem:"2026A", title:"Día inhábil — Revolución Mexicana", start:"2026-11-20", end:"2026-11-20", cat:"inhabil", prio:"baja", desc:"Conmemoración de la Revolución Mexicana." },
   { id:"26-24", sem:"2026A", title:"Periodo vacacional decembrino", start:"2026-12-21", end:"2027-01-01", cat:"inhabil", prio:"alta", desc:"Periodo vacacional de fin de año." },
+
+
   { id:"26-26", sem:"2026A", title:"Trabajo Colegiado en Plantel", start:"2026-08-28", end:"2026-08-28", cat:"colegiado", prio:"media", desc:"Sesión de trabajo colegiado en plantel.SESIÓN PLANEACIÓN" },
   { id:"26-27", sem:"2026A", title:"Trabajo Colegiado en Plantel", start:"2026-10-16", end:"2026-10-16", cat:"colegiado", prio:"media", desc:"Sesión estatal de trabajo colegiado SESIÓN SEGUIMIENTO." },
   { id:"26-28", sem:"2026A", title:"Trabajo Colegiado en Plantel", start:"2026-11-19", end:"2026-11-19", cat:"colegiado", prio:"media", desc:"Sesión estatal de trabajo colegiado.SESIÓN SEGUIMIENTO" },
   { id:"26-29", sem:"2026A", title:"Trabajo Colegiado en Plantel", start:"2027-01-15", end:"2027-01-15", cat:"colegiado", prio:"media", desc:"Sesión estatal de trabajo colegiado.SESIÓN EVALUACIÓN" },
+
   { id:"26-V1", sem:"2026A", title:"Valores: Respeto y Trabajo en Equipo", start:"2026-09-01", end:"2026-09-30", cat:"valores", prio:"baja", desc:"Valores institucionales del mes de septiembre." },
   { id:"26-V2", sem:"2026A", title:"Valores: Compromiso y Solidaridad", start:"2026-10-01", end:"2026-10-31", cat:"valores", prio:"baja", desc:"Valores institucionales del mes de octubre." },
   { id:"26-V3", sem:"2026A", title:"Valores: Honestidad y Disciplina", start:"2026-11-01", end:"2026-11-30", cat:"valores", prio:"baja", desc:"Valores institucionales del mes de noviembre." },
 
-  /* ============ SEMESTRE 2027B ============ */
+  /* ============ SEMESTRE 2027B (Ene 2027 - Jul 2027) ============ */
+
   { id:"27-01", sem:"2027B", title:"Inicio de actividades", start:"2027-01-18", end:"2027-01-18", cat:"inicio", prio:"alta", desc:"Inicio de actividades para semestre 2027B." },
-  { id:"27-02", sem:"2027B", title:"Inscripciones alumnos regulares", start:"2027-01-25", end:"2027-02-05", cat:"insc_reg", prio:"alta", desc:"Periodo de inscripciones para alumnos regulares." },
+
+  { id:"27-02", sem:"2027B", title:"Inscripciones alumnos regulares", start:"2027-01-25", end:"2027-01-29", cat:"insc_reg", prio:"alta", desc:"Periodo de inscripciones para alumnos regulares." },
+  { id:"27-02", sem:"2027B", title:"Inscripciones alumnos regulares", start:"2027-02-02", end:"2027-02-05", cat:"insc_reg", prio:"alta", desc:"Periodo de inscripciones para alumnos regulares." },
+
   { id:"27-03", sem:"2027B", title:"Inscripciones alumnos irregulares", start:"2027-02-15", end:"2027-02-19", cat:"insc_irr", prio:"media", desc:"Periodo de inscripciones para alumnos irregulares." },
+
   { id:"27-04", sem:"2027B", title:"Inicio de clases", start:"2027-02-08", end:"2027-02-08", cat:"clases", prio:"alta", desc:"Comienzan las clases del semestre 2027B." },
-  { id:"27-05", sem:"2027B", title:"1er Parcial", start:"2027-02-08", end:"2027-03-12", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Captura: 17 de marzo." },
-  { id:"27-06", sem:"2027B", title:"2do Parcial", start:"2027-03-16", end:"2027-04-30", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Captura: 6 de mayo." },
-  { id:"27-07", sem:"2027B", title:"3er Parcial", start:"2027-05-03", end:"2027-06-04", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Captura: 9 de junio." },
+
+  { id:"27-05", sem:"2027B", title:"1er Parcial", start:"2027-02-08", end:"2027-02-14", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Captura: 17 de marzo." },
+  { id:"27-05", sem:"2027B", title:"1er Parcial", start:"2027-02-15", end:"2027-02-19", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Captura: 17 de marzo." },
+  { id:"27-05", sem:"2027B", title:"1er Parcial", start:"2027-02-22", end:"2027-02-26", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Captura: 17 de marzo." },
+  { id:"27-05", sem:"2027B", title:"1er Parcial", start:"2027-03-01", end:"2027-03-05", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Captura: 17 de marzo." },
+  { id:"27-05", sem:"2027B", title:"1er Parcial", start:"2027-03-08", end:"2027-03-12", cat:"parcial_1", prio:"alta", desc:"Periodo del primer parcial. Captura: 17 de marzo." },
+
+
+  { id:"27-06", sem:"2027B", title:"2do Parcial", start:"2027-03-16", end:"2027-03-19", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Captura: 6 de mayo." },
+  { id:"27-06", sem:"2027B", title:"2do Parcial", start:"2027-04-05", end:"2027-04-09", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Captura: 6 de mayo." },
+  { id:"27-06", sem:"2027B", title:"2do Parcial", start:"2027-04-12", end:"2027-04-16", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Captura: 6 de mayo." },
+  { id:"27-06", sem:"2027B", title:"2do Parcial", start:"2027-04-19", end:"2027-04-23", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Captura: 6 de mayo." },
+  { id:"27-06", sem:"2027B", title:"2do Parcial", start:"2027-04-26", end:"2027-04-30", cat:"parcial_2", prio:"alta", desc:"Periodo del segundo parcial. Captura: 6 de mayo." },
+
+
+  { id:"27-07", sem:"2027B", title:"3er Parcial", start:"2027-05-03", end:"2027-05-07", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Captura: 9 de junio." },
+  { id:"27-07", sem:"2027B", title:"3er Parcial", start:"2027-05-10", end:"2027-05-14", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Captura: 9 de junio." },
+  { id:"27-07", sem:"2027B", title:"3er Parcial", start:"2027-05-17", end:"2027-05-21", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Captura: 9 de junio." },
+  { id:"27-07", sem:"2027B", title:"3er Parcial", start:"2027-05-24", end:"2027-05-28", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Captura: 9 de junio." },
+  { id:"27-07", sem:"2027B", title:"3er Parcial", start:"2027-05-31", end:"2027-06-04", cat:"parcial_3", prio:"alta", desc:"Periodo del tercer parcial. Captura: 9 de junio." },
+
+
   { id:"27-08", sem:"2027B", title:"Captura calificaciones 1er Parcial", start:"2027-03-17", end:"2027-03-17", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 1er parcial." },
   { id:"27-09", sem:"2027B", title:"Captura calificaciones 2do Parcial", start:"2027-05-06", end:"2027-05-06", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 2do parcial." },
   { id:"27-10", sem:"2027B", title:"Captura calificaciones 3er Parcial", start:"2027-06-09", end:"2027-06-09", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 3er parcial." },
 
-  { id:"27-10a", sem:"2027B", title:"Captura calificaciones 1era Recuperación", start:"2027-02-03", end:"2027-02-03", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones del 1era Recuperación." },
-  { id:"27-10b", sem:"2027B", title:"Captura calificaciones 2da Recuperación", start:"2027-02-24", end:"2027-02-24", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones de la 2da Recuperación." },
-  { id:"27-10c", sem:"2027B", title:"Captura calificaciones 3era Recuperación", start:"2027-03-17", end:"2027-03-17", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones de la 3era Recuperación." },
-  { id:"27-10d", sem:"2027B", title:"Captura calificaciones 4ta Recuperación", start:"2027-04-21", end:"2027-04-21", cat:"captura", prio:"alta", desc:"Último día de captura de calificaciones de la 4ta Recuperación." },
-
-
-
   { id:"27-11", sem:"2027B", title:"Captura PROYECTOS ", start:"2027-06-16", end:"2027-06-16", cat:"captura", prio:"alta", desc:"Último día de captura de PROYECTOS." },
-  { id:"27-12a", sem:"2027B", title:"Proyectos PRESENTACIÓN ", start:"2027-06-07", end:"2027-06-11", cat:"evaluacion", prio:"alta", desc:"Periodo de proyectos PRESENTACIÓN. Captura: 16 de junio." },
-  { id:"27-12", sem:"2027B", title:"Evaluación Institucional", start:"2027-06-14", end:"2027-06-23", cat:"eval_institucional", prio:"alta", desc:"Evaluación Institucional del semestre 2027B." },
-  { id:"27-13", sem:"2027B", title:"GRADUACIONES", start:"2027-07-08", end:"2027-07-16", cat:"graduaciones", prio:"alta", desc:"Ceremonia de graduaciones del semestre 2027B." },
-  { id:"27-13b", sem:"2027B", title:"Fin de actividades del semestre", start:"2027-07-16", end:"2027-07-16", cat:"inicio", prio:"alta", desc:"Fin oficial del semestre 2027B." },
 
+  { id:"27-12", sem:"2027B", title:"Proyectos PRESENTACIÓN ", start:"2027-06-07", end:"2027-06-11", cat:"proyecto", prio:"alta", desc:"Periodo de proyectos PRESENTACIÓN. Captura: 16 de junio." },
+  { id:"27-12b", sem:"2027B", title:"Evaluación Institucional.", start:"2027-06-14", end:"2027-06-23", cat:"evaluacion", prio:"alta", desc:"Evaluación Institucional." },
+
+
+  { id:"27-13", sem:"2027B", title:"Fin de actividades del semestre", start:"2027-07-16", end:"2027-07-16", cat:"inicio", prio:"alta", desc:"Fin oficial del semestre 2027B." },
+
+  { id:"27-14", sem:"2027B", title:"Recuperación extraordinaria 1", start:"2027-01-18", end:"2027-01-29", cat:"recup", prio:"media", desc:"Primera recuperación extraordinaria. Captura: 3 de febrero." },
+  { id:"27-15", sem:"2027B", title:"Recuperación extraordinaria 2", start:"2027-02-08", end:"2027-02-19", cat:"recup", prio:"media", desc:"Segunda recuperación extraordinaria. Captura: 24 de febrero." },
+  { id:"27-16", sem:"2027B", title:"Recuperación extraordinaria 3", start:"2027-03-01", end:"2027-03-12", cat:"recup", prio:"media", desc:"Tercera recuperación extraordinaria. Captura: 17 de marzo." },
+  { id:"27-17", sem:"2027B", title:"Recuperación extraordinaria 4", start:"2027-04-05", end:"2027-04-16", cat:"recup", prio:"media", desc:"Cuarta recuperación extraordinaria. Captura: 21 de abril." },
 
   { id:"27-18", sem:"2027B", title:"Recuperación extraordinaria (sem. siguiente)", start:"2027-06-28", end:"2027-07-14", cat:"recup", prio:"media", desc:"Recuperación extraordinaria del siguiente semestre. Captura: EN AGOSTO." },
+
   { id:"27-19", sem:"2027B", title:"1ra Escuela para Padres", start:"2027-04-12", end:"2027-04-14", cat:"padres", prio:"media", desc:"Primera sesión de escuela para padres." },
   { id:"27-20", sem:"2027B", title:"2da Escuela para Padres", start:"2027-05-17", end:"2027-05-19", cat:"padres", prio:"media", desc:"Segunda sesión de escuela para padres." },
+
   { id:"27-21", sem:"2027B", title:"Semana Santa (vacaciones)", start:"2027-03-22", end:"2027-04-02", cat:"inhabil", prio:"alta", desc:"Periodo vacacional de Semana Santa." },
+
   { id:"27-22", sem:"2027B", title:"Día del Trabajo", start:"2027-05-05", end:"2027-05-05", cat:"inhabil", prio:"baja", desc:"Día inhábil." },
   { id:"27-23", sem:"2027B", title:"Día del Maestro", start:"2027-05-14", end:"2027-05-14", cat:"inhabil", prio:"baja", desc:"Conmemoración del día del maestro." },
+
   { id:"27-24", sem:"2027B", title:"Reunion de Académia Estatal", start:"2027-01-25", end:"2027-01-29", cat:"consejo", prio:"media", desc:"Academia Estatal SEMESTRE 2027B" },
+
   { id:"27-25", sem:"2027B", title:"Trabajo Colegiado estatal", start:"2027-02-04", end:"2027-02-04", cat:"colegiado", prio:"media", desc:"Sesión de trabajo colegiado en plantel. SESIÓN PLANEACIÓN." },
   { id:"27-26", sem:"2027B", title:"Trabajo Colegiado estatal", start:"2027-04-09", end:"2027-04-09", cat:"colegiado", prio:"media", desc:"Sesión estatal de trabajo colegiado. SESIÓN SEGUIMIENTO." },
   { id:"27-27", sem:"2027B", title:"Trabajo Colegiado estatal", start:"2027-05-14", end:"2027-05-14", cat:"colegiado", prio:"media", desc:"Sesión estatal de trabajo colegiado. SESIÓN SEGUIMIENTO." },
   { id:"27-28", sem:"2027B", title:"Trabajo Colegiado estatal", start:"2027-06-30", end:"2027-06-30", cat:"colegiado", prio:"media", desc:"Sesión estatal de trabajo colegiado. SESIÓN EVALUACIÓN." },
-  { id:"27-29", sem:"2027B", title:"GRADUACIONES", start:"2027-07-08", end:"2027-07-16", cat:"graduaciones", prio:"alta", desc:"Ceremonia de graduaciones del semestre 2027B." },
+
+
+  { id:"27-29", sem:"2027B", title:"GRADUACIONES", start:"2027-07-08", end:"2027-07-16", cat:"graduaciones", prio:"alta", desc:"Ceremonia de graduaciones.." },
+
+
   { id:"27-V1", sem:"2027B", title:"Valores: Respeto y Compromiso", start:"2027-02-01", end:"2027-02-28", cat:"valores", prio:"baja", desc:"Valores institucionales del mes de febrero." },
   { id:"27-V2", sem:"2027B", title:"Valores: Honestidad", start:"2027-03-01", end:"2027-03-31", cat:"valores", prio:"baja", desc:"Valores institucionales del mes de marzo." },
   { id:"27-V3", sem:"2027B", title:"Valores: Disciplina y Trabajo en Equipo", start:"2027-04-01", end:"2027-04-30", cat:"valores", prio:"baja", desc:"Valores institucionales del mes de abril." },
@@ -566,6 +646,11 @@ function loadState(){
     const s = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
     Object.assign(state, s);
     if(s.semester) state.currentMonth = new Date(SEMESTERS[s.semester].initMonth);
+    // Migración: si el usuario ya tenía filtros guardados de una versión
+    // anterior (cuando "Proyectos" y "Evaluación Institucional" eran una
+    // sola categoría), aseguramos que la nueva categoría "proyecto" se
+    // muestre por defecto en vez de quedar oculta.
+    if(s.filters && !s.filters.includes("proyecto")) state.filters.push("proyecto");
   }catch(e){}
 }
 
@@ -594,6 +679,7 @@ function semesterEvents(){
 function renderDashboard(){
   const evs = EVENTS.filter(e=>e.sem===state.semester);
   
+  // Contar eventos únicos por descripción (desc)
   const uniqueDescs = new Set();
   let uniqueEvents = 0;
   evs.forEach(e => {
@@ -630,36 +716,28 @@ function renderCalendar(){
 
   let html = `<div class="cal-weekdays">${DAYS_ES.map(d=>`<div>${d}</div>`).join("")}</div><div class="cal-grid">`;
 
+  // Prev month
   for(let i=firstDay-1;i>=0;i--){
     html += `<div class="cal-day other-month"><div class="num">${prevDays-i}</div></div>`;
   }
+  // Current month
   for(let d=1; d<=daysInMonth; d++){
     const date = new Date(y,m,d);
     const evs = eventsOnDate(date);
     const isToday = date.getTime()===today.getTime();
     const dow = date.getDay();
     const weekend = (dow===0 || dow===6) ? "weekend":"";
-    
-    // Mostrar solo 3 eventos máximo y evitar duplicados por título
-    const uniqueTitles = [];
-    const uniqueEvs = [];
-    evs.forEach(ev => {
-      if (!uniqueTitles.includes(ev.title)) {
-        uniqueTitles.push(ev.title);
-        uniqueEvs.push(ev);
-      }
-    });
-    
-    const pills = uniqueEvs.slice(0,3).map(e=>{
+    const pills = evs.slice(0,3).map(e=>{
       const c = CATEGORIES[e.cat];
       return `<div class="pill" data-evid="${e.id}" style="background:${c.hex}" title="${e.title}">${e.title}</div>`;
     }).join("");
-    const more = uniqueEvs.length>3 ? `<div class="more">+${uniqueEvs.length-3} más</div>` : "";
+    const more = evs.length>3 ? `<div class="more">+${evs.length-3} más</div>` : "";
     html += `<div class="cal-day ${isToday?'today':''} ${weekend}" data-date="${ymd(date)}">
       <div class="num">${d}</div>
       <div class="pills">${pills}${more}</div>
     </div>`;
   }
+  // Next month
   const total = firstDay + daysInMonth;
   const rest = (7 - (total%7))%7;
   for(let i=1;i<=rest;i++){
@@ -668,6 +746,7 @@ function renderCalendar(){
   html += `</div>`;
   cal.innerHTML = html;
 
+  // Click handlers
   cal.querySelectorAll(".cal-day").forEach(d=>{
     d.addEventListener("click", (e)=>{
       const pill = e.target.closest(".pill");
@@ -682,6 +761,7 @@ function renderCalendar(){
       if(evs.length===1) openEvent(evs[0]);
       else if(evs.length>1) openDay(date, evs);
     });
+    // Tooltip
     d.addEventListener("mousemove", showDayTooltip);
     d.addEventListener("mouseleave", hideTooltip);
   });
@@ -959,6 +1039,7 @@ function renderAll(){
 }
 function init(){
   loadState();
+  // Reflect loaded state in UI
   document.querySelectorAll("#semesterSwitch button").forEach(b=>{
     b.classList.toggle("active", b.dataset.sem===state.semester);
   });
